@@ -34,10 +34,12 @@ Route::get('/admin/daftar-dosen', [AdminController::class, 'daftarDosen'])->name
 
 Route::get('/admin/jadwal-create', [AdminController::class, 'formJadwalSidang'])->name('admin.jadwal.create');
 Route::post('/admin/jadwal-sidang/store', [AdminController::class, 'storeJadwalSidang'])->name('admin.jadwal.store');
+Route::post('/jadwal-sidang/{id}/update-status', [AdminController::class, 'updateStatusSidang'])->name('jadwal-sidang.update-status');
 
-
+    
 Route::get('/admin/jadwal-sidang', [AdminController::class, 'listJadwalSidang'])->name('admin.jadwal.list');
-Route::put('/admin/jadwal-sidang/{id}/status', [AdminController::class, 'updateStatusSidang'])->name('admin.jadwal.updateStatus');
+// Route::put('/admin/jadwal-sidang/{id}/status', [AdminController::class, 'updateStatusSidang'])->name('admin.jadwal.updateStatus');
+
 
 Route::get('/dosen/jadwal-sidang', [DosenController::class, 'cekJadwalSidang'])->name('dosen.jadwal.sidang');
 Route::get('/dosen/jadwal-sidang/{id}/isi-nilai', [DosenController::class, 'isiNilai'])->name('dosen.jadwal.isiNilai');

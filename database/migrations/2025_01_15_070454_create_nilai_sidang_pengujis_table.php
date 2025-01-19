@@ -17,8 +17,7 @@ return new class extends Migration
             // $table->foreign('id_jadwal')->references('id_jadwal')->on('jadwalSidang');
             $table->id('id_penguji');
             $table->unsignedBigInteger('id_jadwal');
-            // $table->foreign('id_jadwal')->references('id_jadwal')->on('jadwalSidang')->onDelete('cascade')->onUpdate('cascade');
-            $table->foreign('id_jadwal')->references('id_jadwal')->on('jadwal_sidang')->onDelete('cascade')->onUpdate('cascade');
+            // $table->foreign('id_jadwal')->references('id_jadwal')->on('jadwal_sidang')->onDelete('cascade')->onUpdate('cascade');
 
             $table->string('nama_dosen');
             $table->string('nama_mahasiswa');

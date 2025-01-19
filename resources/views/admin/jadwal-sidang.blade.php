@@ -19,6 +19,7 @@
                         <th>Penguji 1</th>
                         <th>Penguji 2</th>
                         <th>Status Sidang</th>
+                        <th>Aksi</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -33,16 +34,16 @@
                         <td>{{ $jadwal->nama_pembimbing }}</td>
                         <td>{{ $jadwal->nama_penguji1 }}</td>
                         <td>{{ $jadwal->nama_penguji2 }}</td>
+                        <td>{{ ucfirst($jadwal->status_sidang) }}</td>
                         <td>
-                            <form action="{{ route('admin.jadwal.updateStatus', $jadwal->id_jadwal) }}" method="POST">
+                            @if($jadwal->status_sidang === 'belum')
+                            <form action="{{ route('jadwal-sidang.update-status', $jadwal->id_jadwal) }}" method="POST">
                                 @csrf
-                                @method('PUT')
-                                <button 
-                                    type="submit" 
-                                    class="btn btn-sm {{ $jadwal->status_sidang ? 'btn-success' : 'btn-secondary' }}">
-                                    {{ $jadwal->status_sidang ? '✔' : 'Belum Selesai' }}
-                                </button>
+                                <button type="submit" class="btn btn-primary">Tandai Sudah Sidang</button>
                             </form>
+                            @else
+                            <button class="btn btn-secondary" disabled>Sudah Sidang</button>
+                            @endif
                         </td>
                     </tr>
                     @endforeach
@@ -51,3 +52,15 @@
         @endif
     </div>
 @endsection
+
+@if(session('success'))
+<div class="alert alert-success">
+    {{ session('success') }}
+</div>
+@endif
+
+@if(session('error'))
+<div class="alert alert-danger">
+    {{ session('error') }}
+</div>
+@endif

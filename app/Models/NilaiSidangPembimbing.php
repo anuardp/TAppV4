@@ -9,6 +9,11 @@ class NilaiSidangPembimbing extends Model
     protected $table = 'nilai_sidang_pembimbing';
 
     protected $fillable = [
+        'id_jadwal',
+        'nama_dosen',
+        'nama_mahasiswa',
+        'tanggal_sidang',
+        'waktu_sidang',
         'nilai_tata_tulis',
         'nilai_keaktifan',
         'nilai_penguasaan_materi',
@@ -18,7 +23,7 @@ class NilaiSidangPembimbing extends Model
     ];
 
     public function jadwalSidang(){
-        // return $this->belongsToMany(JadwalSidang::class, 'id_jadwal', 'id_jadwal');
+        // return $this->hasMany(JadwalSidang::class, 'id_jadwal', 'id_jadwal');
         return $this->hasMany(JadwalSidang::class);
     }
 }

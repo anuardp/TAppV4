@@ -30,11 +30,11 @@ class JadwalSidang extends Model
     ];
 
     public function nilaiSidangPembimbing(){
-        // return $this->belongsToMany(NilaiSidangPembimbing::class, 'id_jadwal', 'id_jadwal');
-        return $this->belongsTo(NilaiSidangPembimbing::class);
+        return $this->belongsTo(NilaiSidangPembimbing::class, 'id_jadwal', 'id_jadwal');
+        // return $this->belongsTo(NilaiSidangPembimbing::class);
     }
     public function nilaiSidangPenguji(){
-        // return $this->belongsToMany(NilaiSidangPenguji::class, 'id_jadwal', 'id_jadwal');
-        return $this->belongsTo(NilaiSidangPenguji::class);
+        return $this->belongsTo(NilaiSidangPenguji::class, 'id_jadwal', 'id_jadwal');
+        // return $this->belongsTo(NilaiSidangPenguji::class);
     }
 }

@@ -106,42 +106,42 @@ class AdminController extends Controller
             'nidn_penguji3' => $validated['nidn_pembimbing'],
         ]));
 
-        // Data untuk nilaiSidangPenguji
-        $pengujiData = [
-            [
-                'id_jadwal' => $jadwal->id,
-                'nama_dosen' => Dosen::where('nidn', $request->nidn_penguji1)->value('nama_dosen'),
-                'nama_mahasiswa' => $request->nama_mahasiswa,
-                'tanggal_sidang' => $request->tanggal_sidang,
-                'waktu_sidang' => $request->waktu_sidang,
-                'status_penilai' => 'penguji1',
-            ],
-            [
-                'id_jadwal' => $jadwal->id,
-                'nama_dosen' => Dosen::where('nidn', $request->nidn_penguji2)->value('nama_dosen'),
-                'nama_mahasiswa' => $request->nama_mahasiswa,
-                'tanggal_sidang' => $request->tanggal_sidang,
-                'waktu_sidang' => $request->waktu_sidang,
-                'status_penilai' => 'penguji2',
-            ],
-            [
-                'id_jadwal' => $jadwal->id,
-                'nama_dosen' => Dosen::where('nidn', $request->nidn_pembimbing)->value('nama_dosen'),
-                'nama_mahasiswa' => $request->nama_mahasiswa,
-                'tanggal_sidang' => $request->tanggal_sidang,
-                'waktu_sidang' => $request->waktu_sidang,
-                'status_penilai' => 'penguji3',
-            ],
-        ];
-        NilaiSidangPenguji::insert($pengujiData);
+        // // Data untuk nilaiSidangPenguji
+        // $pengujiData = [
+        //     [
+        //         'id_jadwal' => $jadwal->id,
+        //         'nama_dosen' => Dosen::where('nidn', $request->nidn_penguji1)->value('nama_dosen'),
+        //         'nama_mahasiswa' => $request->nama_mahasiswa,
+        //         'tanggal_sidang' => $request->tanggal_sidang,
+        //         'waktu_sidang' => $request->waktu_sidang,
+        //         'status_penilai' => 'penguji1',
+        //     ],
+        //     [
+        //         'id_jadwal' => $jadwal->id,
+        //         'nama_dosen' => Dosen::where('nidn', $request->nidn_penguji2)->value('nama_dosen'),
+        //         'nama_mahasiswa' => $request->nama_mahasiswa,
+        //         'tanggal_sidang' => $request->tanggal_sidang,
+        //         'waktu_sidang' => $request->waktu_sidang,
+        //         'status_penilai' => 'penguji2',
+        //     ],
+        //     [
+        //         'id_jadwal' => $jadwal->id,
+        //         'nama_dosen' => Dosen::where('nidn', $request->nidn_pembimbing)->value('nama_dosen'),
+        //         'nama_mahasiswa' => $request->nama_mahasiswa,
+        //         'tanggal_sidang' => $request->tanggal_sidang,
+        //         'waktu_sidang' => $request->waktu_sidang,
+        //         'status_penilai' => 'penguji3',
+        //     ],
+        // ];
+        // NilaiSidangPenguji::insert($pengujiData);
 
-        NilaiSidangPembimbing::create([
-            'id_jadwal' => $jadwal->id,
-            'nama_dosen' => Dosen::where('nidn', $request->nidn_pembimbing)->value('nama_dosen'),
-            'nama_mahasiswa' => $request->nama_mahasiswa,
-            'tanggal_sidang' => $request->tanggal_sidang,
-            'waktu_sidang' => $request->waktu_sidang, 
-        ]);
+        // NilaiSidangPembimbing::create([
+        //     'id_jadwal' => $jadwal->id,
+        //     'nama_dosen' => Dosen::where('nidn', $request->nidn_pembimbing)->value('nama_dosen'),
+        //     'nama_mahasiswa' => $request->nama_mahasiswa,
+        //     'tanggal_sidang' => $request->tanggal_sidang,
+        //     'waktu_sidang' => $request->waktu_sidang, 
+        // ]);
 
         return redirect()->route('admin.jadwal.create')->with('success', 'Jadwal sidang berhasil dibuat');
     }
@@ -164,12 +164,63 @@ class AdminController extends Controller
         return view('admin.jadwal-sidang', compact('jadwalSidang'));
     }
     
-    public function updateStatusSidang($id)
-    {
-        $jadwal = JadwalSidang::findOrFail($id);
-        $jadwal->status_sidang = !$jadwal->status_sidang; 
-        $jadwal->save();
+    // public function updateStatusSidang($id)
+    // {
+    //     $jadwal = JadwalSidang::findOrFail($id);
+    //     $jadwal->status_sidang = !$jadwal->status_sidang; 
+    //     $jadwal->save();
 
-        return redirect()->route('admin.jadwal.list')->with('success', 'Status sidang berhasil diperbarui.');
+    //     return redirect()->route('admin.jadwal.list')->with('success', 'Status sidang berhasil diperbarui.');
+    // }
+    public function updateStatusSidang(Request $request, $id)
+    {
+        // Temukan jadwal sidang berdasarkan ID
+        $jadwal = JadwalSidang::findOrFail($id);
+
+        // Pastikan status_sidang belum "sudah"
+        if ($jadwal->status_sidang === 'sudah') {
+            return redirect()->back()->with('error', 'Sidang sudah diselesaikan sebelumnya.');
+        }
+
+        // Update status sidang pada tabel jadwal_sidang dan mahasiswa
+        $jadwal->update(['status_sidang' => 'sudah']);
+        Mahasiswa::where('nim', $jadwal->nim)->update(['status_sidang' => 'sudah']);
+
+        // Tambahkan data ke tabel nilaiSidangPenguji dan nilaiSidangPembimbing
+        $this->createNilaiSidang($jadwal);
+
+        return redirect()->back()->with('success', 'Status sidang berhasil diperbarui.');
     }
+
+    private function createNilaiSidang($jadwal)
+    {
+        $mahasiswa = Mahasiswa::where('nim', $jadwal->nim)->first();
+        
+        // Tambahkan data ke nilaiSidangPenguji
+        foreach (['nidn_penguji1', 'nidn_penguji2', 'nidn_penguji3'] as $key => $penguji) {
+            if (!empty($jadwal->$penguji)) {
+                NilaiSidangPenguji::create([
+                    'id_jadwal' => $jadwal->id_jadwal,
+                    'nama_dosen' => Dosen::where('nidn', $jadwal->$penguji)->first()->nama_dosen,
+                    'nama_mahasiswa' => $mahasiswa->nama_mahasiswa,
+                    'tanggal_sidang' => $jadwal->tanggal_sidang,
+                    'waktu_sidang' => $jadwal->waktu_sidang,
+                    'status_penilai' => "penguji" . ($key + 1),
+                ]);
+            }
+        }
+
+        // Tambahkan data ke nilaiSidangPembimbing jika ada pembimbing
+        if (!empty($jadwal->nidn_pembimbing)) {
+            NilaiSidangPembimbing::create([
+                'id_jadwal' => $jadwal->id_jadwal,
+                'nama_dosen' => Dosen::where('nidn', $jadwal->nidn_pembimbing)->first()->nama_dosen,
+                'nama_mahasiswa' => $mahasiswa->nama_mahasiswa,
+                'tanggal_sidang' => $jadwal->tanggal_sidang,
+                'waktu_sidang' => $jadwal->waktu_sidang,
+            ]);
+        }
+    }
+
+    
 }
