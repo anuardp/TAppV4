@@ -25,6 +25,11 @@ class Mahasiswa extends Model
         return $this->hasOne(User::class, 'username', 'nim');
     }
     
+
+    public function jadwalSidang()
+    {
+        return $this->hasOne(JadwalSidang::class, 'nim', 'nim');
+    }
     
 
 }

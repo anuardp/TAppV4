@@ -29,6 +29,8 @@ class JadwalSidang extends Model
         'status_sidang',
     ];
 
+
+
     public function nilaiSidangPembimbing(){
         return $this->belongsTo(NilaiSidangPembimbing::class, 'id_jadwal', 'id_jadwal');
         // return $this->belongsTo(NilaiSidangPembimbing::class);
@@ -36,5 +38,22 @@ class JadwalSidang extends Model
     public function nilaiSidangPenguji(){
         return $this->belongsTo(NilaiSidangPenguji::class, 'id_jadwal', 'id_jadwal');
         // return $this->belongsTo(NilaiSidangPenguji::class);
+    }
+
+    public function mahasiswa()
+    {
+        return $this->belongsTo(Mahasiswa::class, 'nim', 'nim');
+    }
+    public function penguji1()
+    {
+        return $this->belongsTo(Dosen::class, 'nidn_penguji1', 'nidn');
+    }
+    public function penguji2()
+    {
+        return $this->belongsTo(Dosen::class, 'nidn_penguji2', 'nidn');
+    }
+    public function pembimbing()
+    {
+        return $this->belongsTo(Dosen::class, 'nidn_pembimbing', 'nidn');
     }
 }

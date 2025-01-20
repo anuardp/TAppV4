@@ -59,7 +59,7 @@
 @endsection --}}
 
 @section('content')
-<div class="container">
+{{-- <div class="container">
     <h2>{{ $isEdit ? 'Edit Nilai Sidang TA' : 'Isi Nilai Sidang TA' }}</h2>
     <form action="{{ $isEdit ? route('update-nilai-sidang', $jadwal->id) : route('store-nilai-sidang', $jadwal->id) }}" method="POST">
         @csrf
@@ -126,5 +126,94 @@
         <!-- Tombol Submit -->
         <button type="submit" class="btn btn-primary">Submit</button>
     </form>
-</div>
+</div> --}}
+<h2>{{ $isEdit ? 'Edit Nilai Sidang TA' : 'Isi Nilai Sidang TA' }}</h2>
+
+<p>Nama Mahasiswa: {{ $jadwal->mahasiswa->nama_mahasiswa }}</p>
+<p>NIM: {{ $jadwal->mahasiswa->nim }}</p>
+
+<!-- Form untuk penilaian -->
+<form method="POST" action="{{ $isEdit ? route('dosen.updateNilaiSidang', $jadwal->id_jadwal) : route('dosen.submitNilaiSidang', $jadwal->id_jadwal) }}">
+    @csrf
+    @if ($isEdit)
+        @method('PUT')
+    @endif
+
+    <!-- Tabel Penilaian Penguji -->
+    <h3>Penilaian sebagai Penguji</h3>
+    <table border="1">
+        <thead>
+            <tr>
+                <th>No</th>
+                <th>Komponen Penilaian</th>
+                <th>1</th>
+                <th>2</th>
+                <th>3</th>
+                <th>4</th>
+                <th>5</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach ($komponenPenilaianPenguji as $index => $komponen)
+                <tr>
+                    <td>{{ $index + 1 }}</td>
+                    <td>{{ $komponen }}</td>
+                    @for ($i = 1; $i <= 5; $i++)
+                        <td>
+                            <input type="radio" name="nilai_penguji[{{ $index }}]" value="{{ $i }}" 
+                                {{ isset($nilaiSidangPenguji) && $nilaiSidangPenguji[$index]['p' . ($index + 1)] == $i ? 'checked' : '' }}>
+                        </td>
+                    @endfor
+                </tr>
+            @endforeach
+        </tbody>
+    </table>
+
+    <!-- Catatan Revisi Penguji -->
+    <div>
+        <label for="catatan_revisi_penguji">Catatan Revisi (Penguji):</label>
+        <textarea name="catatan_revisi_penguji" id="catatan_revisi_penguji" rows="4">{{ $nilaiSidangPenguji->catatan_revisi ?? '' }}</textarea>
+    </div>
+
+    <!-- Tabel Penilaian Pembimbing -->
+    @if ($jadwal->nidn_pembimbing == Auth::user()->nidn)
+        <h3>Penilaian sebagai Pembimbing</h3>
+        <table border="1">
+            <thead>
+                <tr>
+                    <th>No</th>
+                    <th>Komponen Penilaian</th>
+                    <th>1</th>
+                    <th>2</th>
+                    <th>3</th>
+                    <th>4</th>
+                    <th>5</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach ($komponenPenilaianPembimbing as $index => $komponen)
+                    <tr>
+                        <td>{{ $index + 1 }}</td>
+                        <td>{{ $komponen }}</td>
+                        @for ($i = 1; $i <= 5; $i++)
+                            <td>
+                                <input type="radio" name="nilai_pembimbing[{{ $index }}]" value="{{ $i }}"
+                                    {{ isset($nilaiSidangPembimbing) && $nilaiSidangPembimbing['n' . ($index + 1)] == $i ? 'checked' : '' }}>
+                            </td>
+                        @endfor
+                    </tr>
+                @endforeach
+            </tbody>
+        </table>
+
+        <!-- Catatan Revisi Pembimbing -->
+        <div>
+            <label for="catatan_revisi_pembimbing">Catatan Revisi (Pembimbing):</label>
+            <textarea name="catatan_revisi_pembimbing" id="catatan_revisi_pembimbing" rows="4">{{ $nilaiSidangPembimbing->catatan_revisi ?? '' }}</textarea>
+        </div>
+    @endif
+
+    <!-- Tombol Submit -->
+    <button type="submit">Simpan Nilai</button>
+</form>
 @endsection

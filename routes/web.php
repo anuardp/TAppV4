@@ -43,10 +43,12 @@ Route::get('/admin/jadwal-sidang', [AdminController::class, 'listJadwalSidang'])
 
 Route::get('/dosen/jadwal-sidang', [DosenController::class, 'cekJadwalSidang'])->name('dosen.jadwal.sidang');
 Route::get('/dosen/jadwal-sidang/{id}/isi-nilai', [DosenController::class, 'isiNilai'])->name('dosen.jadwal.isiNilai');
-Route::post('/dosen/jadwal-sidang/{id}/simpan-nilai', [DosenController::class, 'simpanNilai'])->name('dosen.jadwal.simpanNilai');
+// Route::post('/dosen/jadwal-sidang/{id}/simpan-nilai', [DosenController::class, 'simpanNilai'])->name('dosen.jadwal.simpanNilai');
 Route::get('/dosen/jadwal-sidang/{id}/edit-nilai', [DosenController::class, 'editNilai'])->name('dosen.jadwal.editNilai');
-Route::put('/dosen/jadwal-sidang/{id}/update-nilai', [DosenController::class, 'updateNilai'])->name('dosen.jadwal.updateNilai');
+// Route::put('/dosen/jadwal-sidang/{id}/update-nilai', [DosenController::class, 'updateNilai'])->name('dosen.jadwal.updateNilai');
 Route::put('/dosen/jadwal-sidang/{id}/finalisasi', [DosenController::class, 'finalisasiNilai'])->name('dosen.jadwal.finalisasiNilai');
+Route::post('/dosen/submit-nilai-sidang/{idJadwal}', [DosenController::class, 'submitNilaiSidang'])->name('dosen.submitNilaiSidang');
+Route::put('/dosen/update-nilai-sidang/{idJadwal}', [DosenController::class, 'updateNilaiSidang'])->name('dosen.updateNilaiSidang');
 
 
 // Route::get('/isi-nilai', function () {
