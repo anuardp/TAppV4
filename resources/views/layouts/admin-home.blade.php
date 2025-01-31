@@ -9,7 +9,7 @@
 <body>
     <div class="d-flex">
         <!-- Sidebar -->
-        <nav class="bg-dark text-light p-3" style="width: 250px; height: 100vh;">
+        <nav class="bg-dark text-light p-3 sticky-top" style="width: 250px; height: 100vh;">
             <h4 class="mb-4">TApp</h4>
             <ul class="nav flex-column">
                 <li class="nav-item dropdown mb-3">
@@ -41,7 +41,7 @@
         <!-- Content -->
         <div style="flex: 1;">
             <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg navbar-light bg-dark text-light">
+            <nav class="navbar navbar-expand-lg navbar-light bg-dark text-light sticky-top">
                 <div class="container-fluid">
                     <form action="{{ route('logout') }}" method="POST" class="d-flex ms-auto">
                         @csrf
