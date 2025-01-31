@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 class NilaiSidangPenguji extends Model
 {
     protected $table = 'nilai_sidang_penguji';
+    protected $primaryKey = 'id_penguji';
     protected $fillable = [
         'id_jadwal',
         'nama_dosen',
@@ -36,8 +37,8 @@ class NilaiSidangPenguji extends Model
         'catatan_revisi',
     ];
 
-    public function jadwalSidang(){
-        // return $this->hasMany(JadwalSidang::class, 'id_jadwal', 'id_jadwal');
-        return $this->hasMany(JadwalSidang::class);
+    public function jadwalSidang()
+    {
+        return $this->belongsTo(JadwalSidang::class, 'id_jadwal');
     }
 }

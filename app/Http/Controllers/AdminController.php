@@ -61,7 +61,6 @@ class AdminController extends Controller
             'alamat' => 'required|string|max:255'
         ]);
 
-        // $dosen = Dosen::create($request->all());
         $dosen = Dosen::create($validated); 
 
         User::create([

@@ -7,6 +7,8 @@ use Illuminate\Http\Request;
 use App\Models\NilaiSidangPenguji;
 use Illuminate\Support\Facades\Auth;
 use App\Models\NilaiSidangPembimbing;
+use App\Models\Dosen;
+use App\Models\Mahasiswa;
 
 class DosenController extends Controller
 {
@@ -33,19 +35,9 @@ class DosenController extends Controller
         $jadwal = JadwalSidang::with(['mahasiswa', 'penguji1', 'penguji2', 'pembimbing'])->findOrFail($idJadwal);
         $isEdit = false;
 
-        // Komponen Penilaian
-        $komponenPenilaianPenguji = [
-            'Komponen 1', 'Komponen 2', 'Komponen 3', 'Komponen 4', 
-            'Komponen 5', 'Komponen 6', 'Komponen 7', 'Komponen 8', 
-            'Komponen 9', 'Komponen 10', 'Komponen 11', 'Komponen 12',
-            'Komponen 13', 'Komponen 14', 'Komponen 15', 'Komponen 16',
-            'Komponen 17', 'Komponen 18'
-        ];
-        $komponenPenilaianPembimbing = [
-            'Tata Tulis', 'Keaktifan', 'Penguasaan Materi', 'Penyelesaian Masalah'
-        ];
+       
 
-        return view('dosen.isi-nilai-sidang', compact('jadwal', 'komponenPenilaianPenguji', 'komponenPenilaianPembimbing', 'isEdit'));
+        return view('dosen.isi-nilai-sidang', compact('jadwal', 'isEdit'));
     }
 
     public function editNilai($idJadwal)
@@ -56,27 +48,10 @@ class DosenController extends Controller
         $nilaiSidangPenguji = NilaiSidangPenguji::where('id_jadwal', $idJadwal)->first();
         $nilaiSidangPembimbing = NilaiSidangPembimbing::where('id_jadwal', $idJadwal)->first();
 
-        $komponenPenilaianPenguji = [
-            'Komponen 1', 'Komponen 2', 'Komponen 3', 'Komponen 4', 
-            'Komponen 5', 'Komponen 6', 'Komponen 7', 'Komponen 8', 
-            'Komponen 9', 'Komponen 10', 'Komponen 11', 'Komponen 12',
-            'Komponen 13', 'Komponen 14', 'Komponen 15', 'Komponen 16',
-            'Komponen 17', 'Komponen 18'
-        ];
-
-        $komponenPenilaianPembimbing = [
-            'Tata Tulis',
-            'Keaktifan Mahasiswa',
-            'Penguasaan Materi',
-            'Penyelesaian Masalah',
-        ];
-
         return view('dosen.isi-nilai-sidang', compact(
             'jadwal',
             'nilaiSidangPenguji',
             'nilaiSidangPembimbing',
-            'komponenPenilaianPenguji',
-            'komponenPenilaianPembimbing',
             'isEdit'
         ));
     }
@@ -97,7 +72,7 @@ class DosenController extends Controller
     //         $jadwal->nilai_penguji3 = $nilaiPenguji;
     //     }
 
-    //     // Simpan nilai pembimbing jika applicable
+    //     // Simpan nilai pembimbing jika dosen juga berstatus sebagai pembimbing
     //     if ($isPembimbing) {
     //         $nilaiPembimbing = array_sum($request->pembimbing) / count($request->pembimbing);
     //         $jadwal->nilai_pembimbing = $nilaiPembimbing;
@@ -135,79 +110,135 @@ class DosenController extends Controller
             'nilai_keaktifan' => 'nullable|integer|min:1|max:5',
             'nilai_penguasaan_materi' => 'nullable|integer|min:1|max:5',
             'nilai_penyelesaian_masalah' => 'nullable|integer|min:1|max:5',
-            'catatan_revisi' => 'nullable|string|max:255',
+            'catatan_revisi' => 'nullable|string|max:2550',
         ]);
 
         // Ambil data jadwal sidang berdasarkan ID
         $jadwal = JadwalSidang::findOrFail($idJadwal);
+        
+        if(Auth::user()->username === $jadwal->nidn_penguji1){
+            $statusPenguji = 'penguji1';
+        }
+        else if(Auth::user()->username === $jadwal->nidn_penguji2){
+            $statusPenguji = 'penguji2';
+        }
+        else if(Auth::user()->username === $jadwal->nidn_penguji3){
+            $statusPenguji = 'penguji3';
+        }
+
+        $penguji = NilaiSidangPenguji::where('id_jadwal', $idJadwal)->where('status_penilai', $statusPenguji);
+
+        $totalNilai = 0;
+        $jumlahKomponen = 18;
+
+        $totalNilai +=  $validated['p1'] + 
+                        $validated['p2'] +
+                        $validated['p3'] +
+                        $validated['kt1']+
+                        $validated['kt2']+
+                        $validated['kt3']+
+                        $validated['ml1']+
+                        $validated['ml2']+
+                        $validated['ml3']+
+                        $validated['ml4']+
+                        $validated['h1']+
+                        $validated['h2']+
+                        $validated['h3']+
+                        $validated['h4']+
+                        $validated['wbi']+
+                        $validated['kp']+
+                        $validated['tepatJ']+
+                        $validated['lancarJ'];
+
+        $nilaiAkhirPenguji = $totalNilai * 100 / 90;
 
         // Proses nilai penguji
-        if ($jadwal->status_penilai === 'penguji1') {
-            $totalNilai = 0;
-            $jumlahKomponen = 18;
-
-            foreach ($validated as $key => $value) {
-                if (str_contains($key, 'nilai_penguji1')) {
-                    $totalNilai += $value;
-                }
-            }
-
-            $nilaiAkhirPenguji = $totalNilai / $jumlahKomponen;
-
+        if ($statusPenguji === 'penguji1') {
             // Simpan ke tabel nilaiSidangPenguji
             NilaiSidangPenguji::updateOrCreate(
-                ['id_jadwal' => $idJadwal],
+                ['id_jadwal' => $idJadwal, 'status_penilai' => $statusPenguji],
                 [
+                    'p1' => $validated['p1'],
+                    'p2' => $validated['p2'],
+                    'p3' => $validated['p3'],
+                    'kt1' => $validated['kt1'],
+                    'kt2' => $validated['kt2'],
+                    'kt3' => $validated['kt3'],
+                    'ml1' => $validated['ml1'],
+                    'ml2' => $validated['ml2'],
+                    'ml3' => $validated['ml3'],
+                    'ml4' => $validated['ml4'],
+                    'h1' => $validated['h1'],
+                    'h2' => $validated['h2'],
+                    'h3' => $validated['h3'],
+                    'h4' => $validated['h4'],
+                    'wbi' => $validated['wbi'],
+                    'kp' => $validated['kp'],
+                    'tepatJ' => $validated['tepatJ'],
+                    'lancarJ' => $validated['lancarJ'],
                     'nilai_akhir_sidang' => $nilaiAkhirPenguji,
-                    'catatan_revisi' => $request->catatan_revisi,
+                    'catatan_revisi' => $validated['catatan_revisi'],
                 ]
             );
 
             // Update nilai penguji pada tabel jadwal sidang
             $jadwal->update(['nilai_penguji1' => $nilaiAkhirPenguji]);
         }
-        else if ($jadwal->status_penilai === 'penguji2') {
-            $totalNilai = 0;
-            $jumlahKomponen = 18;
+        else if ($statusPenguji === 'penguji2') {
 
-            foreach ($validated as $key => $value) {
-                if (str_contains($key, 'nilai_penguji2')) {
-                    $totalNilai += $value;
-                }
-            }
-
-            $nilaiAkhirPenguji = $totalNilai / $jumlahKomponen;
-
-            // Simpan ke tabel nilaiSidangPenguji
             NilaiSidangPenguji::updateOrCreate(
-                ['id_jadwal' => $idJadwal],
+                ['id_jadwal' => $idJadwal, 'status_penilai' => $statusPenguji],
                 [
+                    'p1' => $validated['p1'],
+                    'p2' => $validated['p2'],
+                    'p3' => $validated['p3'],
+                    'kt1' => $validated['kt1'],
+                    'kt2' => $validated['kt2'],
+                    'kt3' => $validated['kt3'],
+                    'ml1' => $validated['ml1'],
+                    'ml2' => $validated['ml2'],
+                    'ml3' => $validated['ml3'],
+                    'ml4' => $validated['ml4'],
+                    'h1' => $validated['h1'],
+                    'h2' => $validated['h2'],
+                    'h3' => $validated['h3'],
+                    'h4' => $validated['h4'],
+                    'wbi' => $validated['wbi'],
+                    'kp' => $validated['kp'],
+                    'tepatJ' => $validated['tepatJ'],
+                    'lancarJ' => $validated['lancarJ'],
                     'nilai_akhir_sidang' => $nilaiAkhirPenguji,
-                    'catatan_revisi' => $request->catatan_revisi,
+                    'catatan_revisi' => $validated['catatan_revisi'],
                 ]
             );
 
             // Update nilai penguji pada tabel jadwal sidang
             $jadwal->update(['nilai_penguji2' => $nilaiAkhirPenguji]);
         }
-        else if ($jadwal->status_penilai === 'penguji3') {
-            $totalNilai = 0;
-            $jumlahKomponen = 18;
-
-            foreach ($validated as $key => $value) {
-                if (str_contains($key, 'nilai_penguji3')) {
-                    $totalNilai += $value;
-                }
-            }
-
-            $nilaiAkhirPenguji = $totalNilai / $jumlahKomponen;
-
-            // Simpan ke tabel nilaiSidangPenguji
+        else if ($statusPenguji === 'penguji3') {
             NilaiSidangPenguji::updateOrCreate(
-                ['id_jadwal' => $idJadwal],
+                ['id_jadwal' => $idJadwal, 'status_penilai' => $statusPenguji],
                 [
+                    'p1' => $validated['p1'],
+                    'p2' => $validated['p2'],
+                    'p3' => $validated['p3'],
+                    'kt1' => $validated['kt1'],
+                    'kt2' => $validated['kt2'],
+                    'kt3' => $validated['kt3'],
+                    'ml1' => $validated['ml1'],
+                    'ml2' => $validated['ml2'],
+                    'ml3' => $validated['ml3'],
+                    'ml4' => $validated['ml4'],
+                    'h1' => $validated['h1'],
+                    'h2' => $validated['h2'],
+                    'h3' => $validated['h3'],
+                    'h4' => $validated['h4'],
+                    'wbi' => $validated['wbi'],
+                    'kp' => $validated['kp'],
+                    'tepatJ' => $validated['tepatJ'],
+                    'lancarJ' => $validated['lancarJ'],
                     'nilai_akhir_sidang' => $nilaiAkhirPenguji,
-                    'catatan_revisi' => $request->catatan_revisi,
+                    'catatan_revisi' => $validated['catatan_revisi'],
                 ]
             );
 
@@ -216,18 +247,13 @@ class DosenController extends Controller
         }
 
         // Proses nilai pembimbing
-        if ($jadwal->status_penilai === 'pembimbing') {
-            $nilaiTataTulis = $request->input('nilai_tata_tulis');
-            $nilaiKeaktifan = $request->input('nilai_keaktifan');
-            $nilaiPenguasaanMateri = $request->input('nilai_penguasaan_materi');
-            $nilaiPenyelesaianMasalah = $request->input('nilai_penyelesaian_masalah');
+        if ($statusPenguji === 'penguji3') {
+            $nilaiTataTulis = $validated['nilai_tata_tulis'];
+            $nilaiKeaktifan = $validated['nilai_keaktifan'];
+            $nilaiPenguasaanMateri = $validated['nilai_penguasaan_materi'];
+            $nilaiPenyelesaianMasalah = $validated['nilai_penyelesaian_masalah'];
 
-            $nilaiAkhirPembimbing = (
-                $nilaiTataTulis +
-                $nilaiKeaktifan +
-                $nilaiPenguasaanMateri +
-                $nilaiPenyelesaianMasalah
-            ) / 4;
+            $nilaiAkhirPembimbing = ($nilaiTataTulis + $nilaiKeaktifan + $nilaiPenguasaanMateri + $nilaiPenyelesaianMasalah) * 100 / 20;
 
             // Simpan ke tabel nilaiSidangPembimbing
             NilaiSidangPembimbing::updateOrCreate(
@@ -238,7 +264,7 @@ class DosenController extends Controller
                     'nilai_penguasaan_materi' => $nilaiPenguasaanMateri,
                     'nilai_penyelesaian_masalah' => $nilaiPenyelesaianMasalah,
                     'nilai_akhir_sidang' => $nilaiAkhirPembimbing,
-                    'catatan_revisi' => $request->catatan_revisi,
+                    'catatan_revisi' => $validated['catatan_revisi'],
                 ]
             );
 
@@ -246,12 +272,10 @@ class DosenController extends Controller
             $jadwal->update(['nilai_pembimbing' => $nilaiAkhirPembimbing]);
         }
 
+
+
         return redirect()->route('dosen.jadwal.sidang')->with('success', 'Nilai sidang berhasil disimpan.');
     }
-
-
-
-
 
 
     public function updateNilaiSidang(Request $request, $idJadwal)
@@ -276,12 +300,12 @@ class DosenController extends Controller
             'kp' => 'nullable|integer|min:1|max:5',
             'tepatJ' => 'nullable|integer|min:1|max:5',
             'lancarJ' => 'nullable|integer|min:1|max:5',
-            'catatan_revisi' => 'nullable|string|max:255',
             'nilai_tata_tulis' => 'nullable|integer|min:1|max:5',
             'nilai_keaktifan' => 'nullable|integer|min:1|max:5',
             'nilai_penguasaan_materi' => 'nullable|integer|min:1|max:5',
             'nilai_penyelesaian_masalah' => 'nullable|integer|min:1|max:5',
             'catatan_revisi' => 'nullable|string|max:255',
+    
         ]);
 
         // Ambil jadwal sidang

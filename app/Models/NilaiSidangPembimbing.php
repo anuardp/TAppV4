@@ -22,8 +22,8 @@ class NilaiSidangPembimbing extends Model
         'catatan_revisi',
     ];
 
-    public function jadwalSidang(){
-        // return $this->hasMany(JadwalSidang::class, 'id_jadwal', 'id_jadwal');
-        return $this->hasMany(JadwalSidang::class);
-    }
+    public function jadwalSidang()
+{
+    return $this->belongsTo(JadwalSidang::class, 'id_jadwal');
+}
 }

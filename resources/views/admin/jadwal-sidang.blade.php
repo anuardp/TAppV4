@@ -1,6 +1,18 @@
 @extends('layouts.admin-home')
     
 @section('content')
+    @if(session('success'))
+    <div class="alert alert-success">
+        {{ session('success') }}
+    </div>
+    @endif
+
+    @if(session('error'))
+    <div class="alert alert-danger">
+        {{ session('error') }}
+    </div>
+    @endif
+
     <div class="container">
         <h2>Daftar Jadwal Sidang Mahasiswa</h2>
         @if($jadwalSidang->isEmpty())
@@ -53,14 +65,3 @@
     </div>
 @endsection
 
-@if(session('success'))
-<div class="alert alert-success">
-    {{ session('success') }}
-</div>
-@endif
-
-@if(session('error'))
-<div class="alert alert-danger">
-    {{ session('error') }}
-</div>
-@endif
