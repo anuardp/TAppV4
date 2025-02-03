@@ -105,43 +105,6 @@ class AdminController extends Controller
             'nidn_penguji3' => $validated['nidn_pembimbing'],
         ]));
 
-        // // Data untuk nilaiSidangPenguji
-        // $pengujiData = [
-        //     [
-        //         'id_jadwal' => $jadwal->id,
-        //         'nama_dosen' => Dosen::where('nidn', $request->nidn_penguji1)->value('nama_dosen'),
-        //         'nama_mahasiswa' => $request->nama_mahasiswa,
-        //         'tanggal_sidang' => $request->tanggal_sidang,
-        //         'waktu_sidang' => $request->waktu_sidang,
-        //         'status_penilai' => 'penguji1',
-        //     ],
-        //     [
-        //         'id_jadwal' => $jadwal->id,
-        //         'nama_dosen' => Dosen::where('nidn', $request->nidn_penguji2)->value('nama_dosen'),
-        //         'nama_mahasiswa' => $request->nama_mahasiswa,
-        //         'tanggal_sidang' => $request->tanggal_sidang,
-        //         'waktu_sidang' => $request->waktu_sidang,
-        //         'status_penilai' => 'penguji2',
-        //     ],
-        //     [
-        //         'id_jadwal' => $jadwal->id,
-        //         'nama_dosen' => Dosen::where('nidn', $request->nidn_pembimbing)->value('nama_dosen'),
-        //         'nama_mahasiswa' => $request->nama_mahasiswa,
-        //         'tanggal_sidang' => $request->tanggal_sidang,
-        //         'waktu_sidang' => $request->waktu_sidang,
-        //         'status_penilai' => 'penguji3',
-        //     ],
-        // ];
-        // NilaiSidangPenguji::insert($pengujiData);
-
-        // NilaiSidangPembimbing::create([
-        //     'id_jadwal' => $jadwal->id,
-        //     'nama_dosen' => Dosen::where('nidn', $request->nidn_pembimbing)->value('nama_dosen'),
-        //     'nama_mahasiswa' => $request->nama_mahasiswa,
-        //     'tanggal_sidang' => $request->tanggal_sidang,
-        //     'waktu_sidang' => $request->waktu_sidang, 
-        // ]);
-
         return redirect()->route('admin.jadwal.create')->with('success', 'Jadwal sidang berhasil dibuat');
     }
 
@@ -163,14 +126,6 @@ class AdminController extends Controller
         return view('admin.jadwal-sidang', compact('jadwalSidang'));
     }
     
-    // public function updateStatusSidang($id)
-    // {
-    //     $jadwal = JadwalSidang::findOrFail($id);
-    //     $jadwal->status_sidang = !$jadwal->status_sidang; 
-    //     $jadwal->save();
-
-    //     return redirect()->route('admin.jadwal.list')->with('success', 'Status sidang berhasil diperbarui.');
-    // }
     public function updateStatusSidang(Request $request, $id)
     {
         // Temukan jadwal sidang berdasarkan ID
@@ -220,6 +175,4 @@ class AdminController extends Controller
             ]);
         }
     }
-
-    
 }

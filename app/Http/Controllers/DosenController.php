@@ -29,8 +29,6 @@ class DosenController extends Controller
 
     public function isiNilai($idJadwal)
     {
-        // $jadwal = JadwalSidang::findOrFail($id, $isEdit = false);
-        // $isPembimbing = Auth::user()->nidn == $jadwal->nidn_pembimbing;
 
         $jadwal = JadwalSidang::with(['mahasiswa', 'penguji1', 'penguji2', 'pembimbing'])->findOrFail($idJadwal);
         $isEdit = false;
@@ -55,33 +53,6 @@ class DosenController extends Controller
             'isEdit'
         ));
     }
-
-    // public function submitNilaiSidang(Request $request, $id)
-    // {
-    //     $jadwal = JadwalSidang::findOrFail($id);
-    //     $isPembimbing = Auth::user()->nidn == $jadwal->nidn_pembimbing;
-
-    //     // Simpan nilai penguji
-    //     $nilaiPenguji = array_sum($request->penguji) / count($request->penguji);
-
-    //     if (Auth::user()->nidn == $jadwal->nidn_penguji1) {
-    //         $jadwal->nilai_penguji1 = $nilaiPenguji;
-    //     } elseif (Auth::user()->nidn == $jadwal->nidn_penguji2) {
-    //         $jadwal->nilai_penguji2 = $nilaiPenguji;
-    //     } elseif (Auth::user()->nidn == $jadwal->nidn_penguji3) {
-    //         $jadwal->nilai_penguji3 = $nilaiPenguji;
-    //     }
-
-    //     // Simpan nilai pembimbing jika dosen juga berstatus sebagai pembimbing
-    //     if ($isPembimbing) {
-    //         $nilaiPembimbing = array_sum($request->pembimbing) / count($request->pembimbing);
-    //         $jadwal->nilai_pembimbing = $nilaiPembimbing;
-    //     }
-
-    //     $jadwal->save();
-
-    //     return redirect()->route('cek-jadwal-sidang')->with('success', 'Nilai Sidang berhasil disimpan');
-    // }
 
     public function submitNilaiSidang(Request $request, $idJadwal)
     {
@@ -270,6 +241,10 @@ class DosenController extends Controller
 
             // Update nilai pembimbing pada tabel jadwal sidang
             $jadwal->update(['nilai_pembimbing' => $nilaiAkhirPembimbing]);
+        }  
+        
+        if($jadwal->nilai_penguji1 !== null  && $jadwal->nilai_penguji2 !== null && $jadwal->nilai_penguji3 !== null && $jadwal->nilai_pembimbing !== null){
+            $jadwal->update(['nilai_akhir' => ($jadwal->nilai_penguji1 + $jadwal->nilai_penguji2 + $jadwal->nilai_penguji3 + $jadwal->nilai_pembimbing) / 4]);           
         }
 
 
