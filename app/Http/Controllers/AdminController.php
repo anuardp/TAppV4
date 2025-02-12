@@ -8,6 +8,8 @@ use App\Models\Mahasiswa;
 use App\Models\JadwalSidang;
 use Illuminate\Http\Request;
 use App\Models\NilaiSidangPenguji;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Hash;
 use App\Models\NilaiSidangPembimbing;
 
@@ -72,6 +74,67 @@ class AdminController extends Controller
         return redirect()->back()->with('success', 'Data Dosen berhasil disimpan!');
     }
 
+    public function editMahasiswa($id){
+        // $mhs = Mahasiswa::findOrFail($id);
+        $mhs = Mahasiswa::findOrFail($id);
+        
+        return view('admin.edit_mahasiswa', compact('mhs'));
+    }
+
+    // \\Log::info('Data yang dikirim:', $request->all());
+
+    public function updateMahasiswa(Request $request, $id){
+        $mhs = Mahasiswa::findOrFail($id);
+
+        // dd($request->all());
+        // dd($request->id_mahasiswa);
+
+        // if (!$mhs) {
+        //     dd('Mahasiswa tidak ditemukan dengan ID: ' . $id);
+        // }
+
+        if (!$mhs) {
+            return redirect()->route('daftar.mahasiswa')->with('error', 'Mahasiswa tidak ditemukan.');
+        }
+    
+        $validated = $request->validate([
+            'nim' => 'required|string|unique:mahasiswa,nim|max:20',
+            'nama_mahasiswa' => 'required|string|max:255',
+            'angkatan' => 'required|integer',
+            'fakultas' => 'required|string|max:255',
+            'prodi' => 'required|string|max:255',
+            'judul' => 'required|string|max:255',
+            'email' => 'required|email|max:255',
+            'nomor_telepon' => 'required|string|max:20',
+            'alamat' => 'required|string|max:255',
+        ]);
+
+        $mhs->update(
+            // ['id_mahasiswa' => $id],
+            // ['nim' => $validated['nim'],
+            // 'nama_mahasiswa' => $validated['nama_mahasiswa'],
+            // 'angkatan' => $validated['angkatan'],
+            // 'fakultas' => $validated['fakultas'],
+            // 'prodi' => $validated['prodi'],
+            // 'judul' => $validated['judul'],
+            // 'email' => $validated['email'],
+            // 'nomor_telepon' => $validated['nomor_telepon'],
+            // 'alamat' => $validated['alamat'],
+            ['nim' => $validated['nim'],
+            'nama_mahasiswa' => $validated['nama_mahasiswa'],
+            'angkatan' => $validated['angkatan'],
+            'fakultas' => $validated['fakultas'],
+            'prodi' => $validated['prodi'],
+            'judul' => $validated['judul'],
+            'email' => $validated['email'],
+            'nomor_telepon' => $validated['nomor_telepon'],
+            'alamat' => $validated['alamat'],
+        ]);
+        // $mhs->save();
+    
+        return redirect()->route('daftar.mahasiswa')->with(['success', 'Data mahasiswa berhasil diperbarui!']);
+    }
+
     public function daftarMahasiswa()
     {
         $mahasiswa = Mahasiswa::all();
@@ -90,7 +153,7 @@ class AdminController extends Controller
     }
 
     public function storeJadwalSidang(Request $request)
-    {
+    { 
         $validated = $request->validate([
             'nim' => 'required|exists:mahasiswa,nim',
             'nama_mahasiswa' => 'required',
@@ -175,4 +238,27 @@ class AdminController extends Controller
             ]);
         }
     }
+
+    public function listNilaiMahasiswa()
+    {
+        $daftarNilaiMahasiswa = Mahasiswa::join('jadwal_sidang', 'jadwal_sidang.nim', '=', 'mahasiswa.nim')
+            // ->join('dosen as pembimbing', 'jadwal_sidang.nidn_pembimbing', '=', 'pembimbing.nidn')
+            // ->join('dosen as penguji1', 'jadwal_sidang.nidn_penguji1', '=', 'penguji1.nidn')
+            // ->join('dosen as penguji2', 'jadwal_sidang.nidn_penguji2', '=', 'penguji2.nidn')
+            ->select(
+                'mahasiswa.nim',
+                'mahasiswa.nama_mahasiswa',  
+                'mahasiswa.judul as judul_ta',
+                'jadwal_sidang.nilai_pembimbing as nilai_pembimbing',
+                'jadwal_sidang.nilai_penguji1 as nilai_penguji1',
+                'jadwal_sidang.nilai_penguji2 as nilai_penguji2',
+                'jadwal_sidang.nilai_penguji3 as nilai_penguji3',
+                'jadwal_sidang.nilai_akhir as nilai_akhir',
+            )
+            ->get();
+
+        return view('admin.daftar_nilai_mahasiswa', compact('daftarNilaiMahasiswa'));
+    }
 }
+
+

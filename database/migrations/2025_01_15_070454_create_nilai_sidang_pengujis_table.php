@@ -42,6 +42,7 @@ return new class extends Migration
             $table->boolean('lancarJ')->nullable();
             $table->float('nilai_akhir_sidang')->nullable();
             $table->text('catatan_revisi')->nullable();
+            $table->enum('isFinal', ['sudah', 'belum'])->default('belum');
             $table->timestamps();
         });
     }

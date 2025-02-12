@@ -6,26 +6,6 @@
         @if($jadwalSidang->isEmpty())
             <p>Tidak ada jadwal sidang.</p>
         @else
-            {{-- <table class="table table-bordered">
-                <thead>
-                    <tr>
-                        <th>Tanggal Sidang</th>
-                        <th>Waktu Sidang</th>
-                        <th>Nama Mahasiswa</th>
-                        <th>NIM</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @foreach($jadwalSidang as $jadwal)
-                    <tr>
-                        <td>{{ $jadwal->tanggal_sidang }}</td>
-                        <td>{{ $jadwal->waktu_sidang }}</td>
-                        <td>{{ $jadwal->nama_mahasiswa }}</td>
-                        <td>{{ $jadwal->nim }}</td>
-                    </tr>
-                    @endforeach
-                </tbody>
-            </table> --}}
             <table class="table table-bordered">
                 <thead>
                     <tr>

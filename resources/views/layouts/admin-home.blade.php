@@ -10,7 +10,7 @@
     <div class="d-flex">
         <!-- Sidebar -->
         <nav class="bg-dark text-light p-3 sticky-top" style="width: 250px; height: 100vh;">
-            <h4 class="mb-4">TApp</h4>
+            <h4 class="mb-4"><a href="{{ route('admin.dashboard') }}" style="text-decoration: none;" class="text-light">TApp</a></h4>
             <ul class="nav flex-column">
                 <li class="nav-item dropdown mb-3">
                     <a class="nav-link dropdown-toggle text-light" data-bs-toggle="dropdown" href="#" role="button">Input Data Baru</a>
@@ -28,12 +28,12 @@
                 <li class="nav-item dropdown mb-3">
                     <a class="nav-link dropdown-toggle text-light" data-bs-toggle="dropdown" href="#" role="button">Lihat Data</a>
                     <ul class="dropdown-menu">
-                        <li><a class="dropdown-item" href="daftar-mahasiswa">Mahasiswa</a></li>
+                        <li><a class="dropdown-item" href="{{ route('daftar.mahasiswa') }}">Mahasiswa</a></li>
                         <li><a class="dropdown-item" href="daftar-dosen">Dosen</a></li>
                     </ul>
                 </li>
                 <li class="nav-item mb-3">
-                    <a href="#" class="nav-link text-light">Daftar Nilai Mahasiswa</a>
+                    <a href="{{ route('admin.daftar.nilai.mahasiswa') }}" class="nav-link text-light">Daftar Nilai Mahasiswa</a>
                 </li>
             </ul>
         </nav>

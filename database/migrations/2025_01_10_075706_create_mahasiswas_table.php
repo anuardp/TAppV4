@@ -24,7 +24,7 @@ return new class extends Migration
             $table->text('alamat');
             $table->text('catatan_revisi')->nullable();
             $table->enum('status_sidang', ['sudah', 'belum'])->default('belum');
-            $table->enum('status_revisi_laporan', ['sudah', 'belum']);
+            $table->enum('status_revisi_laporan', ['sudah', 'belum'])->default('belum');
             $table->float('indeks_akhir')->nullable();
             $table->timestamps();
         });

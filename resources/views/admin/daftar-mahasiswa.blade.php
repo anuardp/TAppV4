@@ -13,6 +13,7 @@
                     <th>Email</th>
                     <th>Nomor Telepon</th>
                     <th>Alamat</th>
+                    <th>Aksi</th>
                 </tr>
             </thead>
             <tbody>
@@ -25,6 +26,11 @@
                     <td>{{ $mhs->email }}</td>
                     <td>{{ $mhs->nomor_telepon }}</td>
                     <td>{{ $mhs->alamat }}</td>
+                    <td>
+                        <a href="{{ route('admin.mahasiswa.edit', $mhs->id_mahasiswa) }}" class="btn btn-warning btn-sm">
+                            Edit
+                        </a>
+                    </td>
                 </tr>
                 @endforeach
             </tbody>

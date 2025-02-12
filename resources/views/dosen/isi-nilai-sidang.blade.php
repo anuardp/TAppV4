@@ -127,8 +127,15 @@
             </thead>
             <tbody>
                 <tr>
+                    <td>Pendahuluan</td>
+                </tr>
+                <tr>
                     <td>1</td>
-                    <td>Pendahuluan - Rumusan Masalah</td>
+                    <td><h5>Pendahuluan - Rumusan Masalah</h5>
+                        <p>Rumusan masalah jelas dan terarah</p>
+                        <p>Range nilai 1 -5. Nilai 1 berarti rumusan masalah tersebut sangat tidak jelas dan terarah.</p>
+                        <p>Nilai 5 berati rumusan masalahnya sangat jelas dan terarah</p>
+                    </td>
                     <td><input type="radio" name="p1" value="1"></td>
                     <td><input type="radio" name="p1" value="2"></td>
                     <td><input type="radio" name="p1" value="3"></td>
@@ -137,7 +144,11 @@
                 </tr>
                 <tr>
                     <td>2</td>
-                    <td>Pendahuluan - Tujuan Penelitian</td>
+                    <td>Pendahuluan - Tujuan Penelitian
+                        <p>Tujuan penelitian dijabarkan dengan jelas</p>
+                        <p>Range nilai 1 -5. Nilai 1 berarti sangat kurang dijabarkan dengan jelas.</p>
+                        <p>Nilai 5 berati tujuan penelitan dijabarkan dengan sangat jelas</p>
+                    </td>
                     <td><input type="radio" name="p2" value="1"></td>
                     <td><input type="radio" name="p2" value="2"></td>
                     <td><input type="radio" name="p2" value="3"></td>
@@ -146,7 +157,11 @@
                 </tr>
                 <tr>
                     <td>3</td>
-                    <td>Pendahuluan - Kontribusi Penelitian</td>
+                    <td>Pendahuluan - Kontribusi Penelitian
+                        <p>Kontribusi penelitian dijabarkan dengan jelas</p>
+                        <p>Range nilai 1 -5. Nilai 1 berarti kontribusi penelitiannya dijabarkan dengan sangat kurang.</p>
+                        <p>Nilai 5 berati kontribusi penelitian dijabarkan dengan sangat jelas</p>
+                    </td>
                     <td><input type="radio" name="p3" value="1"></td>
                     <td><input type="radio" name="p3" value="2"></td>
                     <td><input type="radio" name="p3" value="3"></td>
@@ -156,7 +171,12 @@
               
                 <tr>
                     <td>4</td>
-                    <td>Kajian Teoritis - Relevansi dengan Topik yang Diteliti</td>
+                    <td>Kajian Teoritis - Relevansi dengan Topik yang Diteliti
+                        <p>Adanya relevansi penelitian tugas akhir mahasiswa dengan topik yang diteliti</p>
+                        {{-- <p>Rumusan masalah jelas dan terarah</p> --}}
+                        <p>Range nilai 1 -5. Nilai 1 berarti topik sangat tidak relevan</p>
+                        <p>Nilai 5 berati topik sangat relevan</p>
+                    </td>
                     <td><input type="radio" name="kt1" value="1"></td>
                     <td><input type="radio" name="kt1" value="2"></td>
                     <td><input type="radio" name="kt1" value="3"></td>
@@ -165,7 +185,11 @@
                 </tr>
                 <tr>
                     <td>5</td>
-                    <td>Kajian Teoritis - Daftar Pustaka Terkini</td>
+                    <td>Kajian Teoritis - Daftar Pustaka Terkini
+                        <p>Pengecekan kemutakhiran dan keterkinian daftar pustaka</p>
+                        <p>Range nilai 1 -5. Nilai 1 berarti ada lebih dari 50% sumber pada daftar pustaka yang tidak terkini (lebih dari 10 tahun)</p>
+                        <p>Nilai 5 berati ada kurang dari 10% sumber pada daftar pustaka yang tidak terkini (lebih dari 10 tahun)</p>
+                    </td>
                     <td><input type="radio" name="kt2" value="1"></td>
                     <td><input type="radio" name="kt2" value="2"></td>
                     <td><input type="radio" name="kt2" value="3"></td>

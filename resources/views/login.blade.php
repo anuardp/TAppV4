@@ -6,7 +6,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha3/dist/css/bootstrap.min.css" rel="stylesheet">
     <title>Login</title>
 </head>
-<body class="bg-light">
+<body class="bg-light background" style="background-image: url('images/Widyatama.jpg'); background-size: 100%;">
     <div class="container d-flex justify-content-center align-items-center vh-100">
         <div class="card p-4 shadow" style="width: 400px;">
             <h3 class="text-center">Login</h3>

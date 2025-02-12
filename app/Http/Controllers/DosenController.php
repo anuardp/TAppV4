@@ -46,10 +46,30 @@ class DosenController extends Controller
         $nilaiSidangPenguji = NilaiSidangPenguji::where('id_jadwal', $idJadwal)->first();
         $nilaiSidangPembimbing = NilaiSidangPembimbing::where('id_jadwal', $idJadwal)->first();
 
-        return view('dosen.isi-nilai-sidang', compact(
+        if(Auth::user()->username === $jadwal->nidn_penguji1){
+            $statusPenilai = 'penguji1';
+        }
+        else if(Auth::user()->username === $jadwal->nidn_penguji2){
+            $statusPenilai = 'penguji2';
+        }
+        else if(Auth::user()->username === $jadwal->nidn_penguji3){
+            $statusPenilai = 'penguji3';
+        }
+
+        // $jadwalSidang = JadwalSidang::where('nidn_pembimbing', Auth::user()->username)
+        //     ->orWhere('nidn_penguji1', Auth::user()->username)
+        //     ->orWhere('nidn_penguji2', Auth::user()->username)
+        //     ->orWhere('nidn_penguji3', Auth::user()->username)
+        //     ->get();
+
+        $penguji = NilaiSidangPenguji::where('id_jadwal', $idJadwal)
+                    ->where('status_penilai', $statusPenilai)->first();
+
+        return view('dosen.edit-nilai-sidang', compact(
             'jadwal',
             'nilaiSidangPenguji',
             'nilaiSidangPembimbing',
+            'penguji',
             'isEdit'
         ));
     }
@@ -287,7 +307,16 @@ class DosenController extends Controller
         $jadwal = JadwalSidang::findOrFail($idJadwal);
 
         // Cek status dosen apakah sebagai pembimbing atau penguji
-        $statusPenilai = Auth::user()->status_penilai;
+        // $statusPenilai = Auth::user()->status_penilai;
+        if(Auth::user()->username === $jadwal->nidn_penguji1){
+            $statusPenilai = 'penguji1';
+        }
+        else if(Auth::user()->username === $jadwal->nidn_penguji2){
+            $statusPenilai = 'penguji2';
+        }
+        else if(Auth::user()->username === $jadwal->nidn_penguji3){
+            $statusPenilai = 'penguji3';
+        }
 
         if (in_array($statusPenilai, ['penguji1', 'penguji2', 'penguji3'])) {
             // Hitung nilai akhir untuk penguji
@@ -298,7 +327,7 @@ class DosenController extends Controller
                 $validated['h1'], $validated['h2'], $validated['h3'], $validated['h4'],
                 $validated['wbi'], $validated['kp'], $validated['tepatJ'], $validated['lancarJ']
             ]);
-            $nilaiAkhirPenguji = $totalPenguji / 18;
+            $nilaiAkhirPenguji = $totalPenguji * 100 / 90;
 
             // Update tabel nilai_sidang_penguji
             NilaiSidangPenguji::updateOrCreate(
@@ -336,7 +365,7 @@ class DosenController extends Controller
                 $validated['nilai_penguasaan_materi'],
                 $validated['nilai_penyelesaian_masalah']
             ]);
-            $nilaiAkhirPembimbing = $totalPembimbing / 4;
+            $nilaiAkhirPembimbing = $totalPembimbing * 100 / 20;
 
             // Update tabel nilai_sidang_pembimbing
             NilaiSidangPembimbing::updateOrCreate(
